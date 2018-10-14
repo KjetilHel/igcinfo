@@ -15,34 +15,34 @@ import (
 )
 
 var startTime time.Time // Stopwatch keeping track of uptime
-var results []int		// An array containing all the ID's of the igc's on the site
-var igcs []string		// An array containing the url for all the igc's on the site
-var idCount int			// A counter for incrementing igc IDs so every igc gets an unique ID
+var results []int       // An array containing all the ID's of the igc's on the site
+var igcs []string       // An array containing the url for all the igc's on the site
+var idCount int         // A counter for incrementing igc IDs so every igc gets an unique ID
 
 // Struct for the response after a new igc is POSTed to the site
 type Response struct {
-	Id	int		`json:"id"`
+	Id int `json:"id"`
 }
 
 // Struct for decoding an incoming POST-request
 type Post struct {
-	Url string	`json:"url"`
+	Url string `json:"url"`
 }
 
 // Struct fo all the wanted data from a igc file
 type IgcInfo struct {
-	H_date			string	`json:"h_date"`
-	Pilot			string	`json:"pilot"`
-	Glider			string	`json:"glider"`
-	Gider_id		string	`json:"glider_id"`
-	Track_length	float64		`json:"track_length"`
+	H_date       string  `json:"h_date"`
+	Pilot        string  `json:"pilot"`
+	Glider       string  `json:"glider"`
+	Gider_id     string  `json:"glider_id"`
+	Track_length float64 `json:"track_length"`
 }
 
 // Struct for the api-information
 type ApiInfo struct {
-	Uptime	string	`json:"uptime"`
-	Info	string	`json:"info"`
-	Version	string	`json:"version"`
+	Uptime  string `json:"uptime"`
+	Info    string `json:"info"`
+	Version string `json:"version"`
 }
 
 // Returns the time since the service was deployed
@@ -52,8 +52,8 @@ func uptime() time.Duration {
 
 // init is called when service is deployed
 func init() {
-	startTime = time.Now() 	// Starts the timer
-	idCount = 0				// Initialises the ID count to 0
+	startTime = time.Now() // Starts the timer
+	idCount = 0            // Initialises the ID count to 0
 }
 func main() {
 	// The service handles three different patterns:
@@ -67,7 +67,7 @@ func main() {
 	appengine.Main() // Required for the service to work on GoogleCloud
 
 	// Connects the service to a port and listens to that port
-	err := http.ListenAndServe(":" +os.Getenv("PORT"), nil)
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,7 +95,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 		// Decodes the parameters into an Post-struct
 		var p Post
 		err = json.Unmarshal(body, &p)
-		if err != nil{
+		if err != nil {
 			panic(err)
 		}
 
@@ -166,7 +166,7 @@ func igcInfoHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			field := url[5]// Switch based on the field the user wants
+			field := url[5] // Switch based on the field the user wants
 			switch field {
 			case "pilot":
 				err = json.NewEncoder(w).Encode(data.Pilot)
@@ -196,14 +196,13 @@ func igcInfoHandler(w http.ResponseWriter, r *http.Request) {
 			default:
 				fmt.Fprintln(w, "Not a valid field")
 			}
-		}  else {
+		} else {
 			fmt.Fprintln(w, "Id was too big")
 		}
 	} else {
 		fmt.Fprintln(w, "Too many parameters in url")
 	}
 }
-
 
 // Calculates the total distance of a igc-track
 func distOfTrack(p []igc.Point) float64 {

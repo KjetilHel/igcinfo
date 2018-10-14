@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/marni/goigc"
+	"google.golang.org/appengine"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
-
-
 )
 
 var startTime time.Time
@@ -55,11 +55,18 @@ func init() {
 	idCount = 0
 }
 func main() {
+
+
 	http.HandleFunc("/igcinfo/api", infoHandler)
 	http.HandleFunc("/igcinfo/api/igc", igcHandler)
 	http.HandleFunc("/igcinfo/api/igc/", igcInfoHandler)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	appengine.Main() // Om det står her så funker det
+
+	err := http.ListenAndServe(":" +os.Getenv("PORT"), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func infoHandler(w http.ResponseWriter, r *http.Request) {

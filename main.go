@@ -19,27 +19,27 @@ var results []int       // An array containing all the ID's of the igc's on the 
 var igcs []string       // An array containing the url for all the igc's on the site
 var idCount int         // A counter for incrementing igc IDs so every igc gets an unique ID
 
-// Struct for the response after a new igc is POSTed to the site
+// Response is struct for the response after a new igc is POSTed to the site
 type Response struct {
-	Id int `json:"id"`
+	ID int `json:"id"`
 }
 
-// Struct for decoding an incoming POST-request
+// Post is the struct for decoding an incoming POST-request
 type Post struct {
-	Url string `json:"url"`
+	URL string `json:"url"`
 }
 
-// Struct fo all the wanted data from a igc file
+// IgcInfo is the struct fo all the wanted data from a igc file
 type IgcInfo struct {
-	H_date       string  `json:"h_date"`
-	Pilot        string  `json:"pilot"`
-	Glider       string  `json:"glider"`
-	Gider_id     string  `json:"glider_id"`
-	Track_length float64 `json:"track_length"`
+	HDate       string  `json:"h_date"`
+	Pilot       string  `json:"pilot"`
+	Glider      string  `json:"glider"`
+	GiderID     string  `json:"glider_id"`
+	TrackLength float64 `json:"track_length"`
 }
 
-// Struct for the api-information
-type ApiInfo struct {
+// APIInfo is the struct for the api-information
+type APIInfo struct {
 	Uptime  string `json:"uptime"`
 	Info    string `json:"info"`
 	Version string `json:"version"`
@@ -76,7 +76,7 @@ func main() {
 
 // Writes info about the service to the screen
 func infoHandler(w http.ResponseWriter, r *http.Request) {
-	api := ApiInfo{uptime().String(), "Service for IGC tracks.", "v1"}
+	api := APIInfo{uptime().String(), "Service for IGC tracks.", "v1"}
 	err := json.NewEncoder(w).Encode(api)
 	if err != nil {
 		panic(err)
@@ -100,7 +100,7 @@ func igcHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Adds the url to the url-array and the id to the id-array
-		igcs = append(igcs, p.Url)
+		igcs = append(igcs, p.URL)
 		results = append(results, idCount)
 
 		// Sends the id as a response to the client
@@ -141,11 +141,11 @@ func igcInfoHandler(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 			// Puts the data into an struct and showing it to the user
-			i.H_date = data.Date.String()
+			i.HDate = data.Date.String()
 			i.Pilot = data.Pilot
 			i.Glider = data.GliderType
-			i.Gider_id = data.GliderID
-			i.Track_length = distOfTrack(data.Points)
+			i.GiderID = data.GliderID
+			i.TrackLength = distOfTrack(data.Points)
 			err = json.NewEncoder(w).Encode(i)
 			if err != nil {
 				panic(err)
